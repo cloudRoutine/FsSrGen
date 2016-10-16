@@ -23,11 +23,11 @@
         }
     },
     "frameworks": {
-        "net45" : { 
+        "net46" : { 
             "dependencies": {
                 "FSharp.Core": "4.0.0.1",
-                "Microsoft.Build.Framework": "14.3.0",
-                "Microsoft.Build.Utilities.Core": "14.3.0"
+                "Microsoft.Build.Utilities.Core": "15.1.262-preview5",
+                "Microsoft.Build.Framework": "15.1.262-preview5"
             }
         },
         "netstandard1.6":{
@@ -39,18 +39,18 @@
                 "Microsoft.Build.Framework": "15.1.262-preview5"
             }
         } 
-    },
-    "runtimes": {
-        "win7-x64": {},
-        "win7-x86": {},
-        "osx.10.10-x64": {},
-        "osx.10.11-x64": {},
-        "ubuntu.14.04-x64": {},
-        "ubuntu.16.04-x64": {},
-        "centos.7-x64": {},
-        "rhel.7.2-x64": {},
-        "debian.8-x64": {},
-        "fedora.23-x64": {},
-        "opensuse.13.2-x64": {}
-  }
+    }
+    //,"runtimes": {
+    //    "win7-x64": {},
+    //    "win7-x86": {},
+    //    "osx.10.10-x64": {},
+    //    "osx.10.11-x64": {},
+    //    "ubuntu.14.04-x64": {},
+    //    "ubuntu.16.04-x64": {},
+    //    "centos.7-x64": {},
+    //    "rhel.7.2-x64": {},
+    //    "debian.8-x64": {},
+    //    "fedora.23-x64": {},
+    //    "opensuse.13.2-x64": {}
+  //}
 }

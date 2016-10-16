@@ -1,4 +1,4 @@
-
+$initDir = $pwd
 #make path absolute
 $repoDir = Split-Path -parent (Split-Path -parent $PSCommandPath)
 
@@ -37,4 +37,5 @@ if (-not $?) {
 
 Pop-Location
 
+$pwd = $initDir
 exit 0

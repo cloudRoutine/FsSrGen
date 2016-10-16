@@ -1,4 +1,3 @@
-
 #make path absolute
 $repoDir = Split-Path -parent (Split-Path -parent $PSCommandPath)
 
@@ -37,20 +36,19 @@ if (-not $?) {
 	exit 1
 }
 
-# run tests netstandard1.5
+# run tests netcoreapp 1.0
 
-dotnet run --framework netstandard1.5 -- --verbose
+dotnet run --framework netcoreapp1.0 -- --verbose
 if (-not $?) {
 	exit 1
 }
 
-# run tests net46
+# run tests net45
 
-.\bin\Debug\net46\win7-x64\use-fssrgen-as-msbuild-task.exe --verbose
+.\bin\Debug\net45\win7-x64\use-fssrgen-as-msbuild-task.exe --verbose
 if (-not $?) {
 	exit 1
 }
 
 Pop-Location
-
 exit 0

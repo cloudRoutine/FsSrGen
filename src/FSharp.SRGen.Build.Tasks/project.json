@@ -22,6 +22,9 @@
             }
         }
     },
+    "dependencies": {
+        "FSharp.Core": "4.0.0.1"
+    },
     "frameworks": {
         "net46" : { 
             "frameworkAssemblies": {
@@ -29,7 +32,6 @@
                 "Microsoft.Build.Utilities.v4.0": ""
             }
             // "dependencies": {
-            //     "FSharp.Core": "4.0.0.1",
             //     "Microsoft.Build.Utilities.Core": "15.1.262-preview5",
             //     "Microsoft.Build.Framework": "15.1.262-preview5"
             // }

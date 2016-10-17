@@ -12,10 +12,14 @@ matrix:
       osx_image: xcode7.2
       dotnet: 1.0.0-preview2-003131
       
-
+# Build netcore packages
 script:
-  # dotnet info
   - dotnet --info
-  # restore
-  - cd src/dotnet-fssrgen
+  - cd src/
   - dotnet restore
+  - cd fssrgen
+  - dotnet --verbose pack -c Release --output "../../bin/packages"
+  - cd ../FSharp.SRGen.Build.Tasks
+  - dotnet --verbose pack -c Release --output "../../bin/packages"
+  - cd ../dotnet-fssrgen
+  - dotnet --verbose pack -c Release --output "../../bin/packages"

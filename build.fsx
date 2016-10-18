@@ -61,13 +61,13 @@ Target "CreatePackages" (fun _ ->
     dotnet root "restore"
     // Build FsSrGen nupkg
     dotnet genDir "restore" 
-    dotnet genDir "-c Release --output %s" pkgOutputDir
+    dotnet genDir "pack -c Release --output %s" pkgOutputDir
     // Build dotnet-fssrgen nupkg    
     dotnet dotnetDir "restore"  
-    dotnet dotnetDir "-c Release --output %s" pkgOutputDir 
+    dotnet dotnetDir "pack -c Release --output %s" pkgOutputDir 
     // Build FSharp.SRGen.Build.Tasks nupkg 
     dotnet buildTaskDir "restore"  
-    dotnet buildTaskDir "-c Release --output %s" pkgOutputDir
+    dotnet buildTaskDir "pack -c Release --output %s" pkgOutputDir
             
 )
 

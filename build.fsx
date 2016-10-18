@@ -98,7 +98,7 @@ let fssrgenTaskExe workDir = runCmdIn workDir (root</>"bin"</>"Debug"</>"net46"<
 Target "RunTestsTask" (fun _ ->
 
     dotnet testTaskDir "restore"   
-    msbuild testTaskDir "%s" (root</>"FsSrGenAsMsbuildTask.msbuild /verbosity:detailed")
+    msbuild testTaskDir "%s" (testTaskDir</>"FsSrGenAsMsbuildTask.msbuild /verbosity:detailed")
     dotnet testTaskDir "-v build"
     dotnet testTaskDir "--framework netcoreapp1.0 -- --verbose"
     fssrgenTaskExe testToolDir "--verbose"

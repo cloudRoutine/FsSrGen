@@ -138,12 +138,13 @@ let releasePackage pkgName pkgSuffix =
         let releaseFileName = releaseFile pkgSuffix
         StageFile "" releaseFileName |> ignore
         Git.Commit.Commit "" (sprintf "Bump %s version to %s" pkgName release.NugetVersion)
-        Branches.pushBranch "" remote (Information.getBranchName "")
         // tag the branch release with the package version number
-        Branches.tag "" (sprintf """%s.v%s""" pkgName release.NugetVersion)
+        let version = sprintf """%s.v%s""" pkgName release.NugetVersion
+        Branches.tag "" version
         Branches.pushTag "" remote release.NugetVersion
-        
-        createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes 
+        Branches.pushBranch "" remote (Information.getBranchName "")
+         
+        createDraft gitOwner gitName version (release.SemVer.PreRelease <> None) release.Notes 
     // release on github
     let uploadRelease client pkgName pkgSuffix =
         let notes = makeNotes pkgSuffix       

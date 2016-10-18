@@ -93,7 +93,7 @@ Target "RunTestsTool" (fun _ ->
 let testTaskDir =  root</>"test"</>"use-fssrgen-as-msbuild-task"
 let msbuild workDir = runCmdIn workDir "msbuild"
 let nuget workDir = runCmdIn workDir ("packages"</>"Nuget.CommandLine"</>"tools"</>"nuget.exe")
-let fssrgenTaskExe workDir = runCmdIn workDir (root</>"bin"</>"Debug"</>"net46"</>"win7-x64"</>"use-fssrgen-as-msbuild-task.exe")
+let fssrgenTaskExe workDir = runCmdIn workDir (testTaskDir</>"bin"</>"Debug"</>"net46"</>"win7-x64"</>"use-fssrgen-as-msbuild-task.exe")
 
 Target "RunTestsTask" (fun _ ->
     nuget testTaskDir "restore"

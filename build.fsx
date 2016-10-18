@@ -140,11 +140,8 @@ let releasePackage pkgName pkgSuffix =
         Git.Commit.Commit "" (sprintf "Bump version to %s" release.NugetVersion)
         Branches.pushBranch "" remote (Information.getBranchName "")
         // tag the branch release with the package version number
-        Branches.tag "" release.NugetVersion
+        Branches.tag "" (sprintf "%s - %s" pkgName release.NugetVersion)
         Branches.pushTag "" remote release.NugetVersion
-        // Give each nupkg line its own tag
-        Branches.tag "" pkgName
-        Branches.pushTag "" remote pkgName
         
         createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes 
     // release on github

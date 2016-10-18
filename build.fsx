@@ -28,8 +28,6 @@ let gitRaw = environVarOrDefault "gitRaw" "https://raw.githubusercontent.com/clo
 // The rest of the code is standard F# build script 
 // --------------------------------------------------------------------------------------
 
-let buildDir = "bin"
-
 
 Target "Clean" (fun _ ->    
     !! "src/**/bin"
@@ -50,15 +48,17 @@ let dotnet workDir = runCmdIn workDir "dotnet"
 
 
 let root = __SOURCE_DIRECTORY__
-let genDir = root</>"src"</>"fssrgen"
-let dotnetDir = root</>"src"</>"dotnet-fssrgen"
-let buildTaskDir = root</>"src"</>"FSharp.SRGen.Build.Tasks"
+let srcDir = root</>"src"
+let testDir = root</>"test"
+let genDir = srcDir</>"fssrgen"
+let dotnetDir = srcDir</>"dotnet-fssrgen"
+let buildTaskDir = srcDir</>"FSharp.SRGen.Build.Tasks"
 let pkgOutputDir = root</>"bin"</>"packages" 
 
 
 Target "CreatePackages" (fun _ ->
 
-    dotnet root "restore"
+    dotnet srcDir "restore"
     // Build FsSrGen nupkg
     dotnet genDir "restore" 
     dotnet genDir "pack -c Release --output %s" pkgOutputDir
@@ -79,7 +79,7 @@ let cliProjName = "use-dotnet-fssrgen-as-tool"
 let testToolDir = root</>"test"</>cliProjName
 
 Target "RunTestsTool" (fun _ ->
-
+    dotnet testDir "restore"
     dotnet testToolDir "restore"
     dotnet testToolDir "fssrgen %s %s %s %s" 
         (testToolDir</>"FSComp.txt") (testToolDir</>"FSComp.fs") (testToolDir</>"FSComp.resx") cliProjName
@@ -114,7 +114,7 @@ Target "PublishNuGet" (fun _ ->
             | _ -> getUserInput "Nuget API Key: "
         { p with
             ApiKey = apikey
-            WorkingDir = buildDir }) 
+            WorkingDir = pkgOutputDir }) 
 )
 
 
@@ -170,7 +170,7 @@ Target "GitHubRelease" (fun _ ->
         
         client 
         |> releasePkg pkgName pkgSuffix notes 
-        |> uploadFile (buildDir</>(pkgName + notes.NugetVersion + ".nupkg"))
+        |> uploadFile (pkgOutputDir</>(pkgName + notes.NugetVersion + ".nupkg"))
         |> releaseDraft    
         |> Async.RunSynchronously
         

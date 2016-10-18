@@ -142,7 +142,7 @@ let releasePackage pkgName pkgSuffix =
         // tag the branch release with the package version number
         let version = sprintf """%s.v%s""" pkgName release.NugetVersion
         Branches.tag "" version
-        Branches.pushTag "" remote release.NugetVersion
+        Branches.pushTag "" remote version
        
          
         createDraft gitOwner gitName version (release.SemVer.PreRelease <> None) release.Notes 

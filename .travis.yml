@@ -38,13 +38,13 @@ install:
    
 # Build netcore packages
 script:
-  - dotnet --info
-  - cd src/
-  - dotnet restore --disable-parallel
-  - cd fssrgen
-  - dotnet --verbose pack -c Release --output "../../bin/packages"
-  - cd ../FSharp.SRGen.Build.Tasks
-  - dotnet --verbose pack -c Release --output "../../bin/packages"
-  - cd ../dotnet-fssrgen
-  - dotnet --verbose pack -c Release --output "../../bin/packages"
-  - ./build.sh NuGet
+#   - dotnet --info
+#   - cd src/
+#   - dotnet restore --disable-parallel
+#   - cd fssrgen
+#   - dotnet --verbose pack -c Release --output "../../bin/packages"
+#   - cd ../FSharp.SRGen.Build.Tasks
+#   - dotnet --verbose pack -c Release --output "../../bin/packages"
+#   - cd ../dotnet-fssrgen
+#   - dotnet --verbose pack -c Release --output "../../bin/packages"
+  - ./build.sh RunTests

@@ -92,7 +92,7 @@ Target "RunTestsTool" (fun _ ->
 // --------------------------------------------------------------------------------------
  
 let testTaskDir =  root</>"test"</>"use-fssrgen-as-msbuild-task"
-let msbuild workDir = runCmdIn workDir "msbuid"
+let msbuild workDir = runCmdIn workDir "msbuild"
 let fssrgenTaskExe workDir = runCmdIn workDir (root</>"bin"</>"Debug"</>"net46"</>"win7-x64"</>"use-fssrgen-as-msbuild-task.exe")
 
 Target "RunTestsTask" (fun _ ->

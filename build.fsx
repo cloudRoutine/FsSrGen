@@ -74,7 +74,6 @@ Target "CreatePackages" (fun _ ->
 // Run Tests for the dotnet cli tool
 // --------------------------------------------------------------------------------------
 
-let nuget workDir = runCmdIn workDir ("packages"</>"Nuget.CommandLine"</>"tools"</>"nuget.exe")
 let cliProjName = "use-dotnet-fssrgen-as-tool"
 let testToolDir = root</>"test"</>cliProjName
 
@@ -93,10 +92,11 @@ Target "RunTestsTool" (fun _ ->
  
 let testTaskDir =  root</>"test"</>"use-fssrgen-as-msbuild-task"
 let msbuild workDir = runCmdIn workDir "msbuild"
+let nuget workDir = runCmdIn workDir ("packages"</>"Nuget.CommandLine"</>"tools"</>"nuget.exe")
 let fssrgenTaskExe workDir = runCmdIn workDir (root</>"bin"</>"Debug"</>"net46"</>"win7-x64"</>"use-fssrgen-as-msbuild-task.exe")
 
 Target "RunTestsTask" (fun _ ->
-
+    nuget testTaskDir "restore"
     dotnet testTaskDir "restore"   
     msbuild testTaskDir "%s" (testTaskDir</>"FsSrGenAsMsbuildTask.msbuild /verbosity:detailed")
     dotnet testTaskDir "-v build"

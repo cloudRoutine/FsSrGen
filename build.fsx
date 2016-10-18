@@ -137,7 +137,7 @@ let releasePackage pkgName pkgSuffix =
         // stage,tag, and commit the release notes for this specifc package
         let releaseFileName = releaseFile pkgSuffix
         StageFile "" releaseFileName |> ignore
-        Git.Commit.Commit "" (sprintf "Bump version to %s" release.NugetVersion)
+        Git.Commit.Commit "" (sprintf "Bump %s version to %s" pkgName release.NugetVersion)
         Branches.pushBranch "" remote (Information.getBranchName "")
         // tag the branch release with the package version number
         Branches.tag "" (sprintf """%s.v%s""" pkgName release.NugetVersion)

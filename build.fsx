@@ -106,23 +106,12 @@ Target "RunTestsTask" (fun _ ->
 )
 
 
-Target "PublishNuGet" (fun _ ->
-    Paket.Push (fun p -> 
-        let apikey =
-            match getBuildParam "nuget-apikey" with
-            | s when not (String.IsNullOrWhiteSpace s) -> s
-            | _ -> getUserInput "Nuget API Key: "
-        { p with
-            ApiKey = apikey
-            WorkingDir = pkgOutputDir }) 
-)
-
-
 #load "paket-files/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 open Octokit
 
 
-Target "GitHubRelease" (fun _ ->
+/// helper function to release a single package to github
+let releasePackage pkgName pkgSuffix = 
     let user =
         match getBuildParam "github-user" with
         | s when not (String.IsNullOrWhiteSpace s) -> s
@@ -137,37 +126,30 @@ Target "GitHubRelease" (fun _ ->
         |> Seq.tryFind (fun (s: string) -> s.Contains(gitOwner + "/" + gitName))
         |> function None -> gitHome + "/" + gitName | Some (s: string) -> s.Split().[0]
 
-
-    
     let releaseFile pkgSuffix =
         __SOURCE_DIRECTORY__ </> (sprintf "RELEASE_NOTES_%s.md" pkgSuffix)
     
     // Read release notes & version info from RELEASE_NOTES.md
     let makeNotes pkgSuffix : ReleaseNotes = 
         LoadReleaseNotes (releaseFile  pkgSuffix)    
-    
-    let releasePkg pkgName releaseSuffix release =
-
+    // configure branch for the release upload
+    let releasePkg pkgName pkgSuffix release =
+        // stage,tag, and commit the release notes for this specifc package
+        let releaseFileName = releaseFile pkgSuffix
+        StageFile "" releaseFileName |> ignore
         Git.Commit.Commit "" (sprintf "Bump version to %s" release.NugetVersion)
         Branches.pushBranch "" remote (Information.getBranchName "")
-
+        // tag the branch release with the package version number
         Branches.tag "" release.NugetVersion
         Branches.pushTag "" remote release.NugetVersion
-        
         // Give each nupkg line its own tag
         Branches.tag "" pkgName
         Branches.pushTag "" remote pkgName
         
         createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes 
-    
     // release on github
-    
     let uploadRelease client pkgName pkgSuffix =
-        let releaseFileName = releaseFile pkgSuffix
-        StageFile "" releaseFileName |> ignore
-
         let notes = makeNotes pkgSuffix       
-        
         client 
         |> releasePkg pkgName pkgSuffix notes 
         |> uploadFile (pkgOutputDir</>(pkgName + notes.NugetVersion + ".nupkg"))
@@ -175,11 +157,56 @@ Target "GitHubRelease" (fun _ ->
         |> Async.RunSynchronously
         
     let client = createClient user pw
+    uploadRelease client pkgName pkgSuffix
 
-    uploadRelease client "fssrgen" "FSSRGEN"    
-    uploadRelease client "dotnet-fssrgen" "DOTNET_FSSRGEN"    
-    uploadRelease client "FSharp.SRGen.Build.Tasks" "FSHARP_SRGEN_BUILDTASKS"    
+let ``fssrgen`` = "fssrgen"
+let ``dotnet-fssrgen`` = "dotnet-fssrgen"
+let ``FSharp.SRGen.Build.Tasks`` = "FSharp.SRGen.Build.Tasks"
+ 
+Target "ReleaseFssrgen" (fun _ ->
+    releasePackage ``fssrgen`` "FSSRGEN"    
 )
+
+Target "ReleaseDotnetCli" (fun _ ->
+    releasePackage ``dotnet-fssrgen`` "DOTNET_FSSRGEN"    
+)
+
+Target "ReleaseBuildTask" (fun _ ->
+    releasePackage ``FSharp.SRGen.Build.Tasks`` "FSHARP_SRGEN_BUILDTASKS"   
+)
+
+/// publish a single nupkg determined by the package name
+let singlePublish projName =
+    let singlePackageDir = pkgOutputDir </> projName
+    let nupkg = 
+        (!!(pkgOutputDir</>(projName + ".*.*.*.nupkg"))).Includes
+        |> List.head
+    CreateDir (pkgOutputDir </> projName)
+    MoveFile singlePackageDir nupkg
+    Paket.Push (fun p -> 
+        let apikey =
+            match getBuildParam "nuget-apikey" with
+            | s when not (String.IsNullOrWhiteSpace s) -> s
+            | _ -> getUserInput "Nuget API Key: "
+        { p with
+            ApiKey = apikey            
+            WorkingDir = singlePackageDir })     
+
+
+Target "PublishFssrgen" (fun _ ->
+    singlePublish ``fssrgen``    
+)
+
+Target "PublishDotnetCli" (fun _ ->
+    singlePublish ``dotnet-fssrgen``     
+)
+
+Target "PublishBuildTask" (fun _ ->
+    singlePublish ``FSharp.SRGen.Build.Tasks``    
+)
+    
+
+
 
 
 "Clean"
@@ -192,13 +219,42 @@ Target "RunTests" DoNothing
     =?> ("RunTestsTask",isWindows)
     ==> "RunTests"
 
-
-Target "Release" DoNothing
+// Build and run tests
+Target "Build" DoNothing
 "CreatePackages"
     ==> "RunTests"
-    ?=> "GitHubRelease"
-    ==> "PublishNuGet"
-    ==> "Release"
+    ==> "Build"
+
+
+Target "GitHubReleaseAll" DoNothing 
+
+"Build"
+  ==> "ReleaseFssrgen"
+  ==> "GitHubReleaseAll"
+
+"Build"
+  ==> "ReleaseDotnetCli"
+  ==> "GitHubReleaseAll"
+
+"Build"
+  ==> "ReleaseBuildTask"
+  ==> "GitHubReleaseAll"
+
+
+Target "PublishNugetAll" DoNothing
+
+"ReleaseFssrgen"
+  ==> "PublishFssrgen"
+  ==> "PublishNugetAll"
+    
+"ReleaseDotnetCli"
+  ==> "PublishDotnetCli"
+  ==> "PublishNugetAll"
+    
+"ReleaseBuildTask"
+  ==> "PublishBuildTask"
+  ==> "PublishNugetAll"
+
 
 
 RunTargetOrDefault "RunTests"

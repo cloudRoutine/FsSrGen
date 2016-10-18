@@ -100,7 +100,7 @@ Target "RunTestsTask" (fun _ ->
     dotnet testTaskDir "restore"   
     msbuild testTaskDir "%s" (testTaskDir</>"FsSrGenAsMsbuildTask.msbuild /verbosity:detailed")
     dotnet testTaskDir "-v build"
-    dotnet testTaskDir "--framework netcoreapp1.0 -- --verbose"
+    dotnet testTaskDir "run --framework netcoreapp1.0 -- --verbose"
     fssrgenTaskExe testToolDir "--verbose"
     
 )

@@ -152,7 +152,7 @@ let releasePackage pkgName pkgSuffix =
         let notes = makeNotes pkgSuffix       
         client 
         |> releasePkg pkgName pkgSuffix notes 
-        |> uploadFile (pkgOutputDir</>(pkgName + notes.NugetVersion + ".nupkg"))
+        |> uploadFile (pkgOutputDir</>(pkgName + "." + notes.NugetVersion + ".nupkg"))
         |> releaseDraft    
         |> Async.RunSynchronously
         
@@ -204,14 +204,9 @@ Target "PublishDotnetCli" (fun _ ->
 Target "PublishBuildTask" (fun _ ->
     singlePublish ``FSharp.SRGen.Build.Tasks``    
 )
-    
-
-
-
 
 "Clean"
     ==> "CreatePackages"
-
 
 Target "RunTests" DoNothing
 "CreatePackages"
@@ -256,5 +251,4 @@ Target "PublishNugetAll" DoNothing
   ==> "PublishNugetAll"
 
 
-
-RunTargetOrDefault "RunTests"
+RunTargetOrDefault "Build"

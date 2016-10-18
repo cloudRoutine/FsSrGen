@@ -20,7 +20,7 @@
             "mappings": {
                 "content/": "FSharp.SRGen.targets"
             }
-        }
+        }        
     },
     "dependencies": {
         "FSharp.Core": "4.0.0.1"

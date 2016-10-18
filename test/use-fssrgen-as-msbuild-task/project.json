@@ -26,8 +26,8 @@
         "NUnitLite": "3.5.0"
     },
     "frameworks": {
-        "net45": {
-            "dependencies": {
+        "net46": {
+            "dependencies": {   
                 "FSharp.Core": "4.0.0.1"
             }
         },

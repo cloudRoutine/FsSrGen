@@ -7,7 +7,7 @@ $projName = "use-dotnet-fssrgen-as-tool"
 $testDir = "$repoDir\test\$projName"
 
 # restore
-dotnet restore $testDir -f "$repoDir\bin\packages"
+dotnet restore $testDir  # -f "$repoDir\bin\packages"
 check-last  
 
 # the working directory needs to be changed to a dir where the 

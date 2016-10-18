@@ -5,19 +5,17 @@ $scriptDir = split-path $script:MyInvocation.MyCommand.Path
 $repoDir = split-path -parent $scriptdir
 $testDir = "$repoDir\test\use-fssrgen-as-msbuild-task"
 
+$stored = $pwd
+cd $testDir
+
 # restore testproject and tools from package 
-dotnet restore $testDir   -f "$repoDir\bin\packages\"
+dotnet restore
+& "$repoDir\.nuget\nuget.exe" restore
 check-last  
 
 # run tool
 msbuild "$testdir\FsSrGenAsMsbuildTask.msbuild" /verbosity:detailed 
 check-last  
-
-$stored = $pwd
-# restore test project
-#dotnet restore $testDir
-#check-last  
-cd $testDir
 
 # build
 dotnet -v build 
@@ -28,7 +26,7 @@ dotnet run  --framework netcoreapp1.0 -- --verbose
 check-last  
 
 # run tests net45
-.\bin\Debug\net45\win7-x64\use-fssrgen-as-msbuild-task.exe --verbose
+.\bin\Debug\net46\win7-x64\use-fssrgen-as-msbuild-task.exe --verbose
 check-last  
 
 cd $stored
